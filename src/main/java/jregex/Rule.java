@@ -6,7 +6,7 @@ public interface Rule {
   boolean match(String s, Function<String, Boolean> cont);
 
   default boolean match(String s) {
-    return match(s, cont -> true);
+    return match(s, rest -> true);
   }
 
   default Rule append(Rule other) {
