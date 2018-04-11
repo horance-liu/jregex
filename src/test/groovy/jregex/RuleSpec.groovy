@@ -48,37 +48,37 @@ class RuleSpec extends Specification {
 
   def "sequence: char + char"() {
     expect:
-    matched(sequence(val('a'), val('b')), "ab")
-    mismatched(sequence(val('b'), val('a')), "ab")
+    matched(val('a') + val('b'), "ab")
+    mismatched(val('b') + val('a'), "ab")
   }
 
   def "multi sequence: char + char + char"() {
     expect:
-    matched(sequence(val('a'), val('b'), val('c')), "abc")
-    mismatched(sequence(val('c'), val('b'), val('a')), "abc")
+    matched(val('a') + val('b') + val('c'), "abc")
+    mismatched(val('c') + val('b') + val('a'), "abc")
   }
 
   def "sequence: string + string"() {
     expect:
-    matched(sequence(val("abc"), val("bcd")), "abcbcd")
-    mismatched(sequence(val("bcd"), val("abc")), "abcbcd")
+    matched(val("abc") + val("bcd"), "abcbcd")
+    mismatched(val("bcd") + val("abc"), "abcbcd")
   }
 
   def "multi sequence: string + string + string"() {
     expect:
-    matched(sequence(val("abc"), val("bcd"), val("xyz")), "abcbcdxyz")
-    mismatched(sequence(val("xyz"), val("bcd"), val("abc")), "abcbcdxyz")
+    matched(val("abc") + val("bcd") +val("xyz"), "abcbcdxyz")
+    mismatched(val("xyz") + val("bcd") + val("abc"), "abcbcdxyz")
   }
 
   def "sequence: string + char"() {
     expect:
-    matched(sequence(val("abc"), val("d")), "abcd")
-    matched(sequence(val('d'), val("abc")), "dabc")
+    matched(val("abc") + val("d"), "abcd")
+    matched(val('d') + val("abc"), "dabc")
   }
 
   def "alternative: char | char"() {
     expect:
-    def rule = val('c').or(val('d'))
+    def rule = val('c') | val('d')
 
     matched(rule, "c")
     matched(rule, "d")
@@ -86,7 +86,7 @@ class RuleSpec extends Specification {
 
   def "multi alternative: char | char | char"() {
     expect:
-    def rule = alternative(val('c'), val('d'), val('e'))
+    def rule = val('c') | val('d') | val('e')
 
     matched(rule, "c")
     matched(rule, "d")
@@ -96,7 +96,7 @@ class RuleSpec extends Specification {
 
   def "alternative: string | string"() {
     expect:
-    def rule = val("abc").or(val("bcd"))
+    def rule = val("abc") | val("bcd")
 
     matched(rule, "abc")
     matched(rule, "bcd")
@@ -104,7 +104,7 @@ class RuleSpec extends Specification {
 
   def "multi alternative: string | string | string"() {
     expect:
-    def rule = alternative(val("abc"), val("bcd"), val("xyz"))
+    def rule = val("abc") | val("bcd") | val("xyz")
 
     matched(rule, "abc")
     matched(rule, "bcd")
@@ -113,7 +113,7 @@ class RuleSpec extends Specification {
 
   def "alternative: string | char"() {
     expect:
-    def rule = val("abc").or(val('\n'))
+    def rule = val("abc") | val('\n')
 
     matched(rule, "abc")
     matched(rule, "\n")
@@ -121,7 +121,7 @@ class RuleSpec extends Specification {
 
   def "zero or more(greedy, non-backoff): a*b"() {
     expect:
-    def rule = many(val('a')).append(val('b'))
+    def rule = many(val('a')) + val('b')
 
     matched(rule, "b")
     matched(rule, "ab")
@@ -132,7 +132,7 @@ class RuleSpec extends Specification {
 
   def "one or more(greedy, non-backoff): b+cde"() {
     expect:
-    def rule = oneOrMore(val('b')).append(val("cde"))
+    def rule = oneOrMore(val('b')) + val("cde")
 
     mismatched(rule, "cde")
     matched(rule, "bcde")
@@ -142,8 +142,7 @@ class RuleSpec extends Specification {
 
   def "one or more(greedy, backoff): (b|d)+bbc"() {
     expect:
-    def rule = oneOrMore(val('b').or(val('d'))).append(
-        val("bbc"))
+    def rule = (oneOrMore(val('b') | val('d'))) + val("bbc")
 
     matched(rule, "bbbc")
     matched(rule, "dbbc")
@@ -151,7 +150,7 @@ class RuleSpec extends Specification {
 
   def "oneof('abc'): [bd]+bbc"() {
     expect:
-    def rule = oneOrMore(oneOf("bd")).append(val("bbc"))
+    def rule = oneOrMore(oneOf("bd")) + val("bbc")
 
     matched(rule, "bbbc")
     matched(rule, "dbbc")
@@ -159,7 +158,7 @@ class RuleSpec extends Specification {
 
   def "one or more(greedy, non-backoff): b+cde\$"() {
     expect:
-    def rule = eof(oneOrMore(val('b')).append(val("cde")))
+    def rule = eof(oneOrMore(val('b')) + val("cde"))
 
     mismatched(rule, "cde")
     matched(rule, "bcde")
@@ -169,7 +168,7 @@ class RuleSpec extends Specification {
 
   def "optional(greedy, non-backoff): b?cde"() {
     expect:
-    def rule = optional(val('b')).append(val("cde"))
+    def rule = optional(val('b')) + val("cde")
 
     matched(rule, "cde")
     matched(rule, "bcde")

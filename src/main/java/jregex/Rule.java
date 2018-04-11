@@ -9,7 +9,7 @@ public interface Rule {
     return match(s, rest -> true);
   }
 
-  default Rule append(Rule other) {
+  default Rule plus(Rule other) {
     return (s, cont) -> match(s, rest -> other.match(rest, cont));
   }
 

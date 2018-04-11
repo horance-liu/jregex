@@ -24,7 +24,7 @@ public final class Rules {
     Rule init = (s, cont) -> v.isEmpty() ? s.isEmpty() : true;
     return v.chars()
             .mapToObj(Rules::val)
-            .reduce(init, Rule::append);
+            .reduce(init, Rule::plus);
   }
 
   private static Rule atom(IntPredicate spec) {
@@ -47,16 +47,16 @@ public final class Rules {
   }
 
   public static Rule oneOrMore(Rule rule) {
-    return rule.append(many(rule));
+    return rule.plus(many(rule));
   }
 
   public static Rule eof(Rule rule) {
     Rule end = (s, cond) -> s.isEmpty();
-    return rule.append(end);
+    return rule.plus(end);
   }
 
   public static Rule sequence(Rule init, Rule... rules) {
-    return concat(Rule::append, init, rules);
+    return concat(Rule::plus, init, rules);
   }
 
   public static Rule alternative(Rule init, Rule... rules) {
