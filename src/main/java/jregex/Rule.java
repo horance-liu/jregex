@@ -1,9 +1,9 @@
 package jregex;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface Rule {
-  boolean match(String s, Function<String, Boolean> cont);
+  boolean match(String s, Predicate<String> cont);
 
   default boolean match(String s) {
     return match(s, rest -> true);

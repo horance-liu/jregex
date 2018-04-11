@@ -36,7 +36,7 @@ class RuleSpec extends Specification {
 
   def "any character"() {
     expect:
-    matched(any(), "a")
+    matched(ANY, "a")
   }
 
   def "simple string"() {
@@ -167,7 +167,7 @@ class RuleSpec extends Specification {
     mismatched(rule, "bbcdef")
   }
 
-  def "optinal(greedy, non-backoff): b?cde"() {
+  def "optional(greedy, non-backoff): b?cde"() {
     expect:
     def rule = optional(val('b')).append(val("cde"))
 

@@ -1,16 +1,16 @@
 package jregex;
 
-import java.util.Arrays;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
+import java.util.regex.Pattern;
+
+import static java.util.Arrays.stream;
 
 public final class Rules {
   private Rules() {
   }
 
-  public static Rule any() {
-    return atom(c -> true);
-  }
+  public static final Rule ANY = atom(c -> true);
 
   public static Rule oneOf(String range) {
     return atom(c -> range.indexOf(c) != -1);
@@ -27,25 +27,23 @@ public final class Rules {
             .reduce(init, Rule::append);
   }
 
-
-  private static Rule atom(Predicate<Integer> spec) {
+  private static Rule atom(IntPredicate spec) {
     return (str, cont) -> {
       if (str.isEmpty())
         return false;
       else
         return spec.test(str.codePointAt(0))
-            && cont.apply(str.substring(1));
+            && cont.test(str.substring(1));
     };
   }
 
   public static Rule optional(Rule rule) {
-    return (s, cont) -> rule.match(s, cont)
-                     || cont.apply(s);
+    return (s, cont) -> rule.match(s, cont) || cont.test(s);
   }
 
   public static Rule many(Rule rule) {
     return (s, cont) -> rule.match(s, rest -> many(rule).match(rest, cont))
-                     || cont.apply(s);
+                     || cont.test(s);
   }
 
   public static Rule oneOrMore(Rule rule) {
@@ -65,9 +63,8 @@ public final class Rules {
     return concat(Rule::or, init, rules);
   }
 
-  private static Rule concat(BiFunction<Rule, Rule, Rule> bf,
-                             Rule init, Rule[] rules) {
-    return Arrays.stream(rules)
-            .reduce(init, (r1, r2) -> bf.apply(r1, r2));
+  private static Rule concat(
+      BiFunction<Rule, Rule, Rule> bf, Rule init, Rule[] rules) {
+    return stream(rules).reduce(init, bf::apply);
   }
 }
