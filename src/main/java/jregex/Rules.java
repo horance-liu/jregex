@@ -2,7 +2,6 @@ package jregex;
 
 import java.util.function.BiFunction;
 import java.util.function.IntPredicate;
-import java.util.regex.Pattern;
 
 import static java.util.Arrays.stream;
 
